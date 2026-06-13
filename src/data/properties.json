@@ -1,0 +1,6 @@
+[
+  { "id": 1, "listingType": "rent", "propertyType": "apartment", "city": "Bratislava", "district": "Petrzalka", "rooms": 2, "price": 850, "area": 58, "petsAllowed": true },
+  { "id": 2, "listingType": "rent", "propertyType": "apartment", "city": "Bratislava", "district": "Ruzinov", "rooms": 1, "price": 600, "area": 40, "petsAllowed": false },
+  { "id": 3, "listingType": "buy", "propertyType": "house", "city": "Kosice", "district": "Sever", "rooms": 4, "price": 250000, "area": 120, "petsAllowed": true },
+  { "id": 4, "listingType": "buy", "propertyType": "apartment", "city": "Bratislava", "district": "Stare Mesto", "rooms": 3, "price": 320000, "area": 85, "petsAllowed": true }
+]
