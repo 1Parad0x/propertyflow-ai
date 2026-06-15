@@ -19,7 +19,7 @@ AI-powered lead qualification assistant for real estate agencies.
 
 ### Lead Management Dashboard
 
-![CRM](./assets/crm.png)
+![CRM](./assets/CRM.png)
 
 ## Overview
 
