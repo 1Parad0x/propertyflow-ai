@@ -2,6 +2,25 @@
 
 AI-powered lead qualification assistant for real estate agencies.
 
+### Live Demo
+
+[View Live Demo](https://propertyflowai.vercel.app/)
+
+## Screenshots
+
+### Landing Page
+
+![Landing](./assets/landing.png)
+
+### AI Conversation
+
+![Chat](./assets/chat-1.png)
+![Chat](./assets/chat-2.png)
+
+### Lead Management Dashboard
+
+![CRM](./assets/crm.png)
+
 ## Overview
 
 PropertyFlow AI helps real estate agencies automatically qualify website visitors, recommend matching properties and collect lead information 24/7.
