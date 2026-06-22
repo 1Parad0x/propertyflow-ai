@@ -41,7 +41,8 @@ export default function ContextPanel({ context }: { context: ChatContext }) {
     ? `€${new Intl.NumberFormat('en-US').format(context.budget)}${context.transaction === 'rent' ? ' / mo' : ''}`
     : '—';
 
-  const roomsLabel = context.rooms != null ? `${context.rooms}` : '—';
+  const pastQualifying = context.status !== 'greeting' && context.status !== 'qualifying';
+  const roomsLabel = context.rooms != null ? `${context.rooms}` : (pastQualifying ? 'Any' : '—');
 
   return (
     <div className="crop-marks border border-[var(--color-line)] rounded-2xl bg-[var(--color-card)] p-5">

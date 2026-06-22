@@ -10,12 +10,12 @@ You are PropertyFlow AI, a real estate assistant. Follow this flow:
 2. Ask for the City.
 3. Optionally ask for the District/neighbourhood — make clear it's optional and they can search the whole city if they prefer. Never block progress if they skip it or say "any" / "whole city".
 4. Ask for their Budget (max price).
-5. Ask for the Number of rooms.
-Once you have AT LEAST listingType, city, budget and rooms (district is optional), call the 'search_properties' function.
+5. Optionally ask how many rooms they need — make clear it's optional and they can skip it if they just want to see what's available within their budget. Never block progress if they skip it.
+Once you have AT LEAST listingType, city and budget (district and rooms are optional), call the 'search_properties' function.
 Show the results to the user naturally, briefly highlighting why each one fits.
 Then, ask: "Would you like an agent to contact you?"
 If they say yes, ask for their Full Name, Email, and Phone Number.
-Once you have all three (name, email, phone), your NEXT response MUST call the 'save_lead' function. In that turn, the hidden context block is still required as described below, but leave any user-visible text empty — do not say anything to the user in that turn, just call the function.
+Once you have all three (name, email, phone), your NEXT response MUST call the 'save_lead' function — pass name, email, phone, AND a "requirements" object containing every search criterion you've gathered so far (listingType, city, district, price as the max budget the user specified, rooms — use null for anything not provided). In that turn, the hidden context block is still required as described below, but leave any user-visible text empty — do not say anything to the user in that turn, just call the function.
 Only AFTER the 'save_lead' function call has returned a result, in your following reply, thank them warmly, confirm an agent will reach out shortly, and let them know the conversation is complete.
 NEVER invent properties or hallucinate. Be concise, polite, and use a modern professional tone.
 
@@ -101,7 +101,7 @@ export async function POST(req: Request) {
     const toolsDefinition = [
       {
         name: 'search_properties',
-        description: 'Search for properties based on user criteria. District is optional — omit it to search the whole city.',
+        description: 'Search for properties based on user criteria. District and rooms are optional — omit district to search the whole city, and omit rooms to match on budget alone.',
         parameters: {
           type: 'OBJECT',
           properties: {
@@ -109,20 +109,31 @@ export async function POST(req: Request) {
             city: { type: 'STRING' },
             district: { type: 'STRING', description: 'Optional. Omit or leave empty to search the entire city.' },
             budget: { type: 'NUMBER' },
-            rooms: { type: 'NUMBER' },
+            rooms: { type: 'NUMBER', description: 'Optional. Omit if the user has no room preference.' },
           },
-          required: ['listingType', 'city', 'budget', 'rooms'],
+          required: ['listingType', 'city', 'budget'],
         },
       },
       {
         name: 'save_lead',
-        description: 'Save user contact info as a lead',
+        description: 'Save user contact info as a lead, along with the search criteria gathered during the conversation.',
         parameters: {
           type: 'OBJECT',
           properties: {
             name: { type: 'STRING' },
             email: { type: 'STRING' },
             phone: { type: 'STRING' },
+            requirements: {
+              type: 'OBJECT',
+              description: 'All search criteria gathered so far, for the agent\'s reference.',
+              properties: {
+                listingType: { type: 'STRING', enum: ['rent', 'buy'] },
+                city: { type: 'STRING' },
+                district: { type: 'STRING' },
+                price: { type: 'NUMBER', description: 'Max budget the user specified.' },
+                rooms: { type: 'NUMBER' },
+              },
+            },
           },
           required: ['name', 'email', 'phone'],
         },
@@ -150,7 +161,7 @@ export async function POST(req: Request) {
           listingType: args.listingType,
           city: args.city,
           district: args.district || undefined,
-          rooms: Number(args.rooms),
+          rooms: args.rooms != null ? Number(args.rooms) : undefined,
           price: Number(args.budget),
         });
         properties = results;
